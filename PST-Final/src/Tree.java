@@ -11,17 +11,18 @@ public class Tree<T> {
 	}
 	
 	
-	public void train(ArrayList<T> newInput) {
+	public void train(ArrayList<T> newInput, double newPmin) {
 		for (int i=0; i<newL; i++) {
 			for (int j=0; j<newInput.size()-i; j++) {
 				ArrayList<T> curSequence= new ArrayList<T> (newInput.subList(j, j+i+1));
 				Node<T> theNewNode= new Node <T>(curSequence);
 				root.addNode(theNewNode);
-				totalInputTokens++;
 			}
 		}
-		root.pMinElimination(totalInputTokens, 1);
+		totalInputTokens += newInput.size();
+		root.pMinElimination(totalInputTokens, newPmin);
 		root.print(3);
 	}
+	
 	
 }

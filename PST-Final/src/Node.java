@@ -3,20 +3,21 @@ import java.util.ArrayList;
 public class Node<T> {
 	ArrayList<Node<T>> children= new ArrayList <Node<T>>();
 	ArrayList<T> tokenSequence= new ArrayList<T>();
-	int count=0;
-	
+	int count=1;
+	float findProb=0;
+
 	Node(){
-	
+
 	}
-	
+
 	Node(ArrayList<T> input){
 		tokenSequence=input;
 	}
-	
+
 	public ArrayList<T> getToken() {
 		return tokenSequence;
 	}
-	
+
 	public ArrayList<Node<T>> getChildren() {
 		return children;
 	}
@@ -36,48 +37,36 @@ public class Node<T> {
 			}
 
 			if(!found) 
-//				children.add(node);}
 			{
-				for (int k=0; k<children.size(); k++) {
-					for(int h=0; h<children.get(k).getToken().size(); h++) {
-						if(children.get(k).getToken().size()>1) {
-						int spot=findSuffix(nodeToken);
-						children.get(spot).getToken().add((T)nodeToken);
-						}
-					}
-
-					}
-				}
-				
+				children.add(node);
+				found=true;
+			}
 			
-
-
 		}
 		return found;
 	}
 
+	
 	public void print() {
 		System.out.println(tokenSequence);
 		for(int j=0; j<children.size(); j++) {
 			children.get(j).print(1);
 		}
 	}
-	
+
 	public void print(int numSpacesBefore) {
 		for (int i=0; i<numSpacesBefore; i++) {
 			System.out.print(" ");
 		}
-		
+
 		System.out.print("->");
 		System.out.println(tokenSequence);
 		for(int j=0; j<children.size(); j++) {
-			//children.get(j).print();
 			children.get(j).print(numSpacesBefore+1);
 		}
 	}
-	
-	
-	public int findSuffix(ArrayList<T> token) {
+
+	public int findSuffix(ArrayList<T> token){
 		int spot=0;
 		ArrayList<T> newSuffix= new ArrayList<T> (token.subList(1, token.size()));
 		for (int i=0; i<children.size(); i++) {
@@ -85,36 +74,28 @@ public class Node<T> {
 				spot=i;
 			}
 		}
-	return spot;
+		return spot;
 	}
-	
-	
+
+
 	public boolean ifSuffix(ArrayList<T> token) {
-		boolean answer=false;
-		if(token.size()==0) {
-			answer=false;
-		}
-		else{
-		ArrayList<T> newSuffix= new ArrayList<T> (token.subList(1, token.size()));
-		for (int i=0; i<children.size(); i++) {
-			if (children.get(i).getToken().equals(newSuffix)) {
-				answer=true;
-			}
-		}
-		}
-		return answer;
+		ArrayList<T> newSuffix= new ArrayList<T> (token.subList(token.size()-tokenSequence.size(), token.size()));
+		return newSuffix.equals(tokenSequence);
 	}
-	
-	public boolean pMinElimination(int totalTokens, float pMin) {
-		int numOccur=totalTokens-tokenSequence.size();
-		float findProb=count/totalTokens;
+
+	public boolean pMinElimination(int totalTokens, double pMin) {
+		float numOccur=totalTokens-(tokenSequence.size()-1);
+		findProb=(float) count/numOccur;
 		boolean shouldRemove=false;
-		if(findProb<pMin) {
+		if(findProb<pMin && tokenSequence.size()!=0) {
 			shouldRemove=true;
 		}
 		else {
 			for(int d=0; d<children.size();d++) {
-				
+				boolean eliminate=children.get(d).pMinElimination(totalTokens, 0.1);
+				if (eliminate==true) {
+					children.remove(children.get(d));
+				}
 			}
 		}
 		return shouldRemove;
