@@ -86,6 +86,7 @@ public class Node<T> {
 	public boolean pMinElimination(int totalTokens, double pMin) {
 		float numOccur=totalTokens-(tokenSequence.size()-1);
 		findProb=(float) count/numOccur;
+		System.out.println("Token = " + tokenSequence + " findprob = " + findProb);
 		boolean shouldRemove=false;
 		if(findProb<pMin && tokenSequence.size()!=0) {
 			shouldRemove=true;
@@ -94,7 +95,9 @@ public class Node<T> {
 			for(int d=0; d<children.size();d++) {
 				boolean eliminate=children.get(d).pMinElimination(totalTokens, 0.1);
 				if (eliminate==true) {
+					System.out.println("Removing: " + children.get(d).tokenSequence);
 					children.remove(children.get(d));
+					d --;
 				}
 			}
 		}
